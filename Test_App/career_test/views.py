@@ -1,7 +1,9 @@
 from django.shortcuts import render
-from .models import Question, Answer, Result
+from .models import Question, Answer, Result, User
 from django.shortcuts import get_object_or_404
 from django.shortcuts import HttpResponse, HttpResponseRedirect
+
+
 def index(request):
     questions = Question.objects.all()
     return render(request, 'index.html', {'questions': questions})
@@ -27,3 +29,8 @@ def submit_answers(request):
 
     # Если запрос не является POST запросом, возвращаем ошибку
     return HttpResponse("Method Not Allowed", status=405)
+
+def user_list(request):
+    users = User.objects.all()
+    print("Retrieved users:", users) 
+    return render(request, 'index.html', {'users': users})

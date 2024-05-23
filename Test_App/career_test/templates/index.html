@@ -19,5 +19,11 @@
         {% endfor %}
         <button type="submit">Submit Answers</button>
     </form>
+    <a href="{% url 'user_list' %}">View User List</a>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.username }} ({{ user.email }})</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
