@@ -4,7 +4,7 @@
             <div className="sign-content">
                 <div className="sign-form">
                     <h2 className="form-title">Вход</h2>
-                    <form className="register-form" @submit.prevent="goToRegistration">
+                    <form className="register-form">
                         <div className="form-group">
                             <input type="email" v-model="login" placeholder="Логин (email)">
                         </div>
@@ -13,7 +13,7 @@
                         </div>
                         <div className="form-container">
                             <div className="form-group form-button">
-                                <input type="submit" @click="Authentificate" className="form-submit" value="Войти">
+                                <input type="submit" @click.prevent="Authentificate" className="form-submit" value="Войти">
                             </div>
                             <div className="form-button">
                                 <button type="button" className="form-submit"
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         return {
@@ -36,7 +38,47 @@ export default {
         };
     },
     methods: {
-        Authentificate() {
+        async Authentificate() {
+            
+            if (this.login.length <= 6) {
+                alert('Логин должен содержать более 6 символов.');
+                return;
+            }
+            if (this.password.length <= 6) {
+                alert('Пароль должен содержать более 6 символов.');
+                return;
+            }
+
+            // Проверка формата email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.login)) {
+                alert('Некорректный формат email.');
+                return;
+            }
+
+            // Проверка пароля на наличие только латинских символов
+            const passwordRegex = /^[a-zA-Z]+$/;
+            if (!passwordRegex.test(this.password)) {
+                alert('Пароль должен содержать только латинские символы.');
+                return;
+            }
+            console.log("Валидация пройдена")
+
+            
+            try {
+                const response = await axios.post('http://localhost:8000/login/', {
+                    login: this.login,
+                    password: this.password
+                });
+                alert(response.data.message);
+            } 
+            catch (error) {
+                if (error.response) {
+                    alert(error.response.data.message);
+                } else {
+                    alert('Ошибка.');
+                }
+            }
         }
 
     }
