@@ -1,93 +1,60 @@
 <template>
-    <section className="sign">
-        <div className="container">
-            <div className="sign-content">
-                <div className="sign-form">
-                    <h2 className="form-title">Вход</h2>
-                    <form className="register-form">
-                        <div className="form-group">
-                            <input type="email" v-model="login" placeholder="Логин (email)">
-                        </div>
-                        <div className="form-group">
-                            <input type="password" v-model="password" placeholder="Пароль">
-                        </div>
-                        <div className="form-container">
-                            <div className="form-group form-button">
-                                <input type="submit" @click.prevent="Authentificate" className="form-submit" value="Войти">
-                            </div>
-                            <div className="form-button">
-                                <button type="button" className="form-submit"
-                                    @click="$router.push({ name: 'register' })">Регистрация</button>
-                            </div>
-                        </div>
-                    </form>
+    <section class="sign">
+      <div class="container">
+        <div class="sign-content">
+          <div class="sign-form">
+            <h2 class="form-title">Вход</h2>
+            <form class="register-form" @submit.prevent="Authentificate">
+              <div class="form-group">
+                <input type="email" v-model="login" placeholder="Логин (email)" required>
+              </div>
+              <div class="form-group">
+                <input type="password" v-model="password" placeholder="Пароль" required>
+              </div>
+              <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+              <div class="form-container">
+                <div class="form-group form-button">
+                  <input type="submit" class="form-submit" value="Войти">
                 </div>
-            </div>
+                <div class="form-button">
+                  <button type="button" class="form-submit" @click="$router.push({ name: 'register' })">Регистрация</button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </section>
-</template>
-
-<script>
-import axios from 'axios';
-
-export default {
+  </template>
+  
+  <script>
+  export default {
     data() {
-        return {
-            login: '',
-            password: ''
-        };
+      return {
+        login: '',
+        password: '',
+        errorMessage: ''
+      };
     },
     methods: {
-        async Authentificate() {
-            
-            if (this.login.length <= 6) {
-                alert('Логин должен содержать более 6 символов.');
-                return;
-            }
-            if (this.password.length <= 6) {
-                alert('Пароль должен содержать более 6 символов.');
-                return;
-            }
-
-            // Проверка формата email
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(this.login)) {
-                alert('Некорректный формат email.');
-                return;
-            }
-
-            // Проверка пароля на наличие только латинских символов
-            const passwordRegex = /^[a-zA-Z]+$/;
-            if (!passwordRegex.test(this.password)) {
-                alert('Пароль должен содержать только латинские символы.');
-                return;
-            }
-            console.log("Валидация пройдена")
-
-            
-            try {
-                const response = await axios.post('http://localhost:5000/api/login', {
-                    login: this.login,
-                    password: this.password
-                });
-                alert(response.data.message);
-            } 
-            catch (error) {
-                if (error.response) {
-                    alert(error.response.data.message);
-                } else {
-                    alert('Ошибка.');
-                }
-            }
+      Authentificate() {
+        if (this.isPasswordValid(this.password)) {
+            this.errorMessage = ''
+          alert('Вход выполнен');
+        } else {
+          this.errorMessage = 'Пароль может сожержать только латинские буквы и цифры, длина не менее 8 символов';
         }
-
+      },
+      isPasswordValid(password) {
+        const passwordRegex = /^[A-Za-z0-9]{8,}$/;
+        return passwordRegex.test(password);
+      }
     }
-};
-
-</script>
-
-<style scoped>
-.container {
+  };
+  </script>
+  
+  <style scoped>
+  .container {
     width: 20%;
     min-width: max-content;
     padding: 20px;
@@ -95,10 +62,10 @@ export default {
     border-radius: 10px;
     display: flex;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Основные стили для секции регистрации */
-.sign {
+  }
+  
+  /* Основные стили для секции регистрации */
+  .sign {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -106,70 +73,46 @@ export default {
     min-height: 80vh;
     background-color: #f2f2f2;
     /* Цвет фона для секции, вы можете изменить его при необходимости */
-}
-
-.sign-content {
+  }
+  
+  .sign-content {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-}
-
-.sign-form {
+  }
+  
+  .sign-form {
     width: 100%;
-}
-
-.form-title {
+  }
+  
+  .form-title {
     font-size: 24px;
     color: #333;
     margin-bottom: 20px;
     text-align: center;
-}
-
-.form-group,
-.form-button {
+  }
+  
+  .form-group,
+  .form-button {
     flex: 1;
-    /* Flex-grow property to make both elements take equal space */
     margin-right: 10px;
-    /* Add some spacing between the elements */
-}
-
-.form-group:last-child,
-.form-button:last-child {
-    margin-right: 0;
-    /* Remove the margin on the last element */
-}
-
-.form-submit {
-    width: 100%;
-    /* Ensure the input/button takes the full width of the parent */
-}
-
-.form-group,
-.form-button {
-    flex: 1;
-    /* Flex-grow property to make both elements take equal space */
-    margin-right: 10px;
-    /* Add some spacing between the elements */
     margin-bottom: 15px;
-}
-
-.form-group:last-child,
-.form-button:last-child {
+  }
+  
+  .form-group:last-child,
+  .form-button:last-child {
     margin-right: 0;
-    /* Remove the margin on the last element */
-}
-
-.form-submit {
+  }
+  
+  .form-submit {
     width: 100%;
-    /* Ensure the input/button takes the full width of the parent */
-}
-
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
+  }
+  
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"] {
     border-radius: 5px;
     background: #f9f9f9;
     width: 100%;
@@ -180,9 +123,9 @@ export default {
     padding: 6px 10px;
     font-family: 20px Poppins;
     box-sizing: border-box;
-}
-
-.form-group input[type="date"] {
+  }
+  
+  .form-group input[type="date"] {
     border-radius: 5px;
     background: #f9f9f9;
     width: 100%;
@@ -196,39 +139,38 @@ export default {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-}
-
-.form-group input[type="checkbox"] {
+  }
+  
+  .form-group input[type="checkbox"] {
     margin-right: 10px;
-}
-
-.form-container {
+  }
+  
+  .form-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
-}
-
-.label-agree-term {
+  }
+  
+  .label-agree-term {
     font-size: 14px;
     color: #333;
-}
-
-.label-agree-term a {
+  }
+  
+  .label-agree-term a {
     color: #3C388D;
     text-decoration: none;
-}
-
-.label-agree-term a:hover {
+  }
+  
+  .label-agree-term a:hover {
     text-decoration: underline;
-}
-
-
-.form-button {
+  }
+  
+  .form-button {
     display: flex;
     justify-content: center;
-}
-
-.form-submit {
+  }
+  
+  .form-submit {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -237,9 +179,17 @@ export default {
     font-size: 16px;
     cursor: pointer;
     transition: background 0.3s;
-}
-
-.form-submit:hover {
+  }
+  
+  .form-submit:hover {
     background: #2e2a72;
-}
-</style>
+  }
+  
+  .error-message {
+    color: rgb(185, 22, 22);
+    margin-bottom: 15px;
+    text-align: center;
+    font-family: Poppins;
+  }
+  </style>
+  
