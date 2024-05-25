@@ -33,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label for="graduationYear">Год окончания обучения в школе</label>
-                <input type="number" id="graduationYear" v-model="form.graduationYear" required />
+                <input type="number" id="graduationYear" v-model="form.graduationYear" min="1900" max="2024" required />
             </div>
             <div class="form-group">
                 <label for="faculty">Факультет</label>
@@ -48,7 +48,7 @@
             </div>
             <div class="form-group">
                 <label for="phone">Мобильный телефон</label>
-                <input type="tel" id="phone" v-model="form.phone" required />
+                <input type="tel" id="phone" v-model="form.phone" pattern="[0-9]{11}" required />
             </div>
             <button type="submit">Отправить</button>
         </form>
@@ -68,13 +68,12 @@ export default {
                 graduationYear: '',
                 faculty: '',
                 email: '',
-                phone: '',
+                phone: ''
             },
             submitted: false,
         };
     },
     created() {
-        // Инициализация формы с данными пользователя
         this.form.lastName = 'Иванов';
         this.form.firstName = 'Иван';
         this.form.middleName = 'Иванович';
@@ -83,11 +82,11 @@ export default {
     },
     methods: {
         submitApplication() {
-
+            console.log('Форма отправлена:', this.form);
         },
         editApplication() {
-
-        },
+            console.log('Редактирование заявки');
+        }
     },
 };
 </script>
@@ -172,7 +171,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     display: block;
-    width: 100%;
+    width: calc(100% + 17px);
     font-size: 1em;
 }
 

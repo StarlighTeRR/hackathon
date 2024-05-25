@@ -1,23 +1,23 @@
 <template>
-  <div class="header">
-    <nav className="header__container">
-      <div className="right-link">
+  <div class="header" @click="handleClickOutside">
+    <nav class="header__container">
+      <div class="right-link">
         <div class="header__button">
           <RouterLink to="/login">Войти</RouterLink>
         </div>
       </div>
 
-      <div className="right-link">
-        <label for="dropdown-checkbox" className="profile__header">
-          <span className="dropdown-text">Мой профиль</span>
-          <span className="dropdown__arrow"></span>
+      <div class="right-link" ref="dropdown">
+        <label for="dropdown-checkbox" class="profile__header">
+          <span class="dropdown-text">Мой профиль</span>
+          <span class="dropdown__arrow" :class="{ rotated: isDropdownOpen }"></span>
         </label>
-        <input type="checkbox" id="dropdown-checkbox" className="dropdown-checkbox">
-        <div className="dropdown-menu">
+        <input type="checkbox" id="dropdown-checkbox" class="dropdown-checkbox" v-model="isDropdownOpen">
+        <div class="dropdown-menu">
           <ul>
-            <li className="dropdown-item dropdown-text" @click="OpenUserProfilePage">Профиль</li>
-            <li className="dropdown-item dropdown-text" @click="OpenQuestionnairePage">Моя анкета</li>
-            <li className="dropdown-item dropdown-text">Выйти</li>
+            <li class="dropdown-item dropdown-text" @click="OpenUserProfilePage">Профиль</li>
+            <li class="dropdown-item dropdown-text" @click="OpenQuestionnairePage">Моя анкета</li>
+            <li class="dropdown-item dropdown-text">Выйти</li>
           </ul>
         </div>
       </div>
@@ -25,13 +25,15 @@
   </div>
 
   <div class="subtop">
-    <div class="header__container">
+    <div class="subtop__container">
       <div class="header-block">
-        <div class="logotype-block">
-          <span>
-            <p>Абитуриентам</p>
-          </span>
+        <div class="logotype-block" p style="padding: 15px;">
+          <div class="logo-hackathon"></div>
+          <div class="divider"></div>
         </div>
+        <span>
+          <p>{{ currentPageTitle }}</p>
+        </span>
       </div>
     </div>
   </div>
@@ -41,9 +43,8 @@
       <div class="row">
         <div class="col-xs-12">
           <ul class="nav-menu">
-            <li class="dropdown dropdown--white active" @click="OpenHomePage">Выбор факультета</li>
-            <li class="dropdown dropdown-cabinet" @click="OpenUserProfilePage">Личный кабинет
-            </li>
+            <li class="dropdown dropdown--white" :class="{ active: currentPage === 'home' }" @click="OpenHomePage">Выбор факультета</li>
+            <li class="dropdown dropdown-cabinet" :class="{ active: currentPage === 'UserProfile' }" @click="OpenUserProfilePage">Личный кабинет</li>
           </ul>
         </div>
       </div>
@@ -62,20 +63,72 @@ export default {
   data() {
     return {
       login: '',
-      password: ''
+      password: '',
+      currentPageTitle: 'Абитуриентам',
+      isDropdownOpen: false,
+      activeMenuItem: 'home'
     };
+  },
+  watch: {
+    $route(to, from) {
+      this.updatePageTitle(to);
+      this.isDropdownOpen = false;
+    }
   },
   methods: {
     OpenUserProfilePage() {
-      router.push('UserProfile')
+    router.push('UserProfile');
+    this.currentPage = 'UserProfile';
     },
     OpenQuestionnairePage() {
-      router.push({ name: 'questionnaire' })
-    }
-    ,
+      router.push({ name: 'questionnaire' });
+      this.currentPage = 'null';
+    },
     OpenHomePage() {
-      router.push({ name: 'home' })
+    router.push({ name: 'home' });
+    this.currentPage = 'home';
+    },
+    updatePageTitle(route) 
+    {
+
+  switch (route.name) {
+    case 'home':
+      this.currentPageTitle = 'Выбор факультета';
+      break;
+    case 'UserProfile':
+      this.currentPageTitle = 'Профиль пользователя';
+      break;
+    case 'questionnaire':
+      this.currentPageTitle = 'Моя анкета';
+      break;
+    case 'login':
+      this.currentPageTitle = 'Вход';
+      this.currentPage = 'null';
+      break;
+    case 'register':
+      this.currentPageTitle = 'Регистрация';
+      this.currentPage = 'null';
+      break;
+    default:
+      this.currentPageTitle = 'Личный кабинет';
+      break;
+      }
+    },
+    handleClickOutside(event) {
+      const dropdown = this.$refs.dropdown;
+      if (dropdown && !dropdown.contains(event.target)) {
+        this.isDropdownOpen = false;
+      }
     }
+  },
+  mounted() {
+  this.updatePageTitle(this.$route);
+  this.currentPage = this.$route.name;
+  document.addEventListener('click', this.handleClickOutside);
+  this.OpenHomePage();
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleClickOutside);
   }
 };
 </script>
@@ -131,7 +184,6 @@ nav {
   height: 41px;
 }
 
-/* Стили для ссылок */
 a.right-link {
   margin-left: auto;
   margin-right: 10px;
@@ -183,12 +235,9 @@ li {
 .dropdown:first-child {
   margin-left: -41px;
 }
-
 .dropdown__arrow {
-  transition: all 0.3s;
-  transform: scale(1) rotate(0deg);
-  margin: auto 0 auto 10px;
   background: url(assets/dropdown-arrow.svg);
+  margin: auto 0 auto 10px;
   width: 16px;
   height: 10px;
   display: inline-block;
@@ -242,5 +291,49 @@ li {
 .dropdown-checkbox:checked~.dropdown__arrow {
   transition: all 0.3s;
   transform: scale(0) rotate(-180deg);
+}
+
+.subtop {
+  background-color: white;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.subtop__container {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1170px;
+}
+
+.header-block {
+  display: flex;
+  align-items: center;
+}
+
+.logotype-block {
+  display: flex;
+  align-items: center;
+}
+
+.logo-hackathon {
+  margin: 0 10px 0 0;
+  background: url('assets/logo_hackathon.svg');
+  background-size: contain;
+  width: 75px;
+  height: 75px;
+}
+
+.divider {
+  width: 2px;
+  height: 60px;
+  background-color: #3C388D;
+  margin: 0 10px;
+}
+
+span {
+  display: flex;
+  align-items: center;
 }
 </style>
