@@ -1,0 +1,29 @@
+version: '3'
+env:
+  FRONTEND_PROJECT: '{{ .FRONTEND_PROJECT | default "website" }}'
+tasks:
+  Frontend-docker-build:
+    dir: Frontend
+    cmds:
+      - docker build -t {{ .FRONTEND_PROJECT }} .  
+  
+  
+  Frontend-docker-run:
+    deps:
+      - Frontend-docker-build
+    cmds:
+      - docker run -p 3030:3030 --rm -ti --name "{{ .FRONTEND_PROJECT }}" -d {{ .FRONTEND_PROJECT }}
+  Frontend-docker-stop:
+    cmds:
+      - docker stop {{ .FRONTEND_PROJECT }}
+  
+  
+  
+  compose-up:
+    cmds:
+      - docker-compose -p {{ .PROJECT }} up -d
+  compose-down:
+    cmds:
+      - docker-compose -p {{ .PROJECT }} down -v
+
+      
