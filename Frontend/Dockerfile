@@ -21,19 +21,20 @@ COPY . .
 
 RUN npm run build
 
-FROM build as release
+# Этап 2: Запуск сервера
+FROM nginx:alpine as release
 
-WORKDIR /app
+# Удаляем дефолтный файл конфигурации Nginx
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Копируем наш файл конфигурации Nginx
+COPY nginx.conf /etc/nginx/conf.d
 
 # Копирование собранного проекта из предыдущего этапа
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package*.json ./
-
-# Установка сервера (например, serve) для обслуживания статических файлов
-RUN npm install -g serve
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Открытие порта
 EXPOSE 3030
 
-# Команда для запуска сервера
-CMD ["serve", "-s", "dist", "-l", "3030"]
+# Запуск Nginx
+CMD ["nginx", "-g", "daemon off;"]
