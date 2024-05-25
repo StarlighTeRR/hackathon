@@ -76,7 +76,6 @@ export default {
         return;
       }
       this.passwordMismatch = false;
-      // Сохранение данных пользователя
     },
   },
 };
@@ -178,13 +177,14 @@ textarea {
 
 button {
   padding: 0.5em 1em;
+  margin-top: 1em;
   background-color: #007BFF;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   display: block;
-  width: 100%;
+  width: calc(100% + 14px);
   font-size: 1em;
 }
 

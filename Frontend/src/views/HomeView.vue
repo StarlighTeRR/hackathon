@@ -54,12 +54,13 @@ export default {
 
 <style scoped>
 .main-container {
-  margin: 0 auto;
+  margin: auto;
   max-width: 1170px;
   background-color: white;
   color: #3C388D;
   padding: 20px;
   font-family: Arial, sans-serif;
+  position: relative;
 }
 
 h1 {
@@ -76,7 +77,7 @@ h1 {
 
 .form-container {
   width: 75%;
-  margin: 0 auto;
+  margin: auto;
 }
 
 h2 {
@@ -97,12 +98,13 @@ label {
 
 input,
 textarea {
-  width: 100%;
+  width: 98%;
   padding: 0.5em;
   border: 1px solid #CCC;
   border-radius: 4px;
   margin-bottom: 0.5em;
   height: 2em;
+  resize: none;
 }
 
 textarea {
