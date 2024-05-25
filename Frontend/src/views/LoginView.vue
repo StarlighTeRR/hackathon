@@ -66,7 +66,7 @@ export default {
 
             
             try {
-                const response = await axios.post('http://localhost:8000/login/', {
+                const response = await axios.post('http://localhost:8000/api/login/', {
                     login: this.login,
                     password: this.password
                 });
