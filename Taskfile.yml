@@ -1,29 +1,49 @@
 version: '3'
 env:
-  FRONTEND_PROJECT: '{{ .FRONTEND_PROJECT | default "website" }}'
+  FRONTEND_PROJECT_NAME: 'frontend'
+  BACKEND_PROJECT_NAME: 'backend'
+  FRONTEND_PROJECT_PATH: './Frontend'
+  BACKEND_PROJECT_PATH: './Backend'
+  PROJECT: 'project'
 tasks:
   Frontend-docker-build:
-    dir: Frontend
     cmds:
-      - docker build -t {{ .FRONTEND_PROJECT }} .  
-  
-  
+      - docker build -t {{ .FRONTEND_PROJECT_NAME }} {{ .FRONTEND_PROJECT_PATH }}
+
   Frontend-docker-run:
     deps:
       - Frontend-docker-build
     cmds:
-      - docker run -p 3030:3030 --rm -ti --name "{{ .FRONTEND_PROJECT }}" -d {{ .FRONTEND_PROJECT }}
+      - docker run -p 3030:3030 --rm -ti --name "{{ .FRONTEND_PROJECT_NAME }}" -d {{ .FRONTEND_PROJECT_NAME }}
+
   Frontend-docker-stop:
     cmds:
-      - docker stop {{ .FRONTEND_PROJECT }}
-  
-  
-  
+      - docker stop {{ .FRONTEND_PROJECT_NAME }}
+
+
+
+
+  Backend-docker-build:
+    cmds:
+      - docker build -t {{ .BACKEND_PROJECT_NAME }} {{ .BACKEND_PROJECT_PATH }}
+
+  Backend-docker-run:
+    deps:
+      - Backend-docker-build
+    cmds:
+      - docker run -p 5000:5000 --rm -ti --name "{{ .BACKEND_PROJECT_NAME }}" -d {{ .BACKEND_PROJECT_PATH }}
+
+  Backend-docker-stop:
+    cmds:
+      - docker stop {{ .BACKEND_PROJECT_NAME }}
+
+
+
+
   compose-up:
     cmds:
       - docker-compose -p {{ .PROJECT }} up -d
+
   compose-down:
     cmds:
       - docker-compose -p {{ .PROJECT }} down -v
-
-      
