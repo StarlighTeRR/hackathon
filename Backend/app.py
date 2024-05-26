@@ -3,12 +3,11 @@ from flask import Flask, jsonify, request
 import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
 from config import Config
 import joblib 
-from sklearn.preprocessing import LabelEncoder
 
 
 direction_names = {
@@ -27,7 +26,8 @@ def predict_direction(model, label_encoder, subjects, direction_names):
     return predicted_direction
 
 model = joblib.load('model.joblib')
-label_encoder = LabelEncoder()
+label_encoder = joblib.load('label_encoder.joblib')
+
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 client = app.test_client()
