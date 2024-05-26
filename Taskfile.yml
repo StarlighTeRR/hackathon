@@ -14,7 +14,7 @@ tasks:
     deps:
       - Frontend-docker-build
     cmds:
-      - docker run -p 3030:3030 --rm -ti --name "{{ .FRONTEND_PROJECT_NAME }}" -d {{ .FRONTEND_PROJECT_NAME }}
+      - docker run -p 3030:3030 --rm -ti --name "{{ .FRONTEND_PROJECT_NAME }}" -d {{ .FRONTEND_PROJECT_PATH }}
 
   Frontend-docker-stop:
     cmds:

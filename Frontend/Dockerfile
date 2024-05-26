@@ -1,8 +1,6 @@
 # Этап 1: Сборка JSON из YAML
 FROM node:lts-alpine3.20 as build
 
-ARG TASK_BINARY=task_linux_amd64.tar.gz
-
 RUN apk update && apk add --no-cache \
     build-base \
     npm \
@@ -16,6 +14,10 @@ COPY package*.json .
 
 RUN npm install @vue/cli -g
 RUN npm install
+
+# ЧИСТИМ
+RUN npm cache clean --force && \
+    rm -rf /tmp/* /var/tmp/*
 
 COPY . .
 
