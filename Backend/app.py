@@ -1,12 +1,15 @@
 
 from flask import Flask, jsonify, request
 import sqlalchemy as db
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
 from config import Config
+from sqlalchemy.exc import NoResultFound
+import re
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
@@ -29,18 +32,53 @@ Base.metadata.create_all(bind=engine)
 @app.route('/api/register', methods=['POST'])
 def register():
     params = request.get_json()
-    user = User(**params)
-    session.add(user)
-    session.commit()
-    token = user.get_token()
-    return jsonify({'token': token})
+    
+    # Проверка наличия всех обязательных полей
+    required_fields = ['email', 'name','middle_name', 'last_name', 'birth_date', 'password']
+    missing_fields = [field for field in required_fields if field not in params]
+    if missing_fields:
+        return jsonify({'error': f'Пропущенные поля: {", ".join(missing_fields)}'}), 400
+
+    # Проверка формата email
+    email_pattern = r'^\S+@\S+\.\S+$'
+    if not re.match(email_pattern, params['email']):
+        return jsonify({'error': 'Геправильный формат почты'}), 400
+
+    # Проверка уникальности email
+    existing_user = User.query.filter_by(email=params['email']).first()
+    if existing_user:
+        return jsonify({'error': 'Почта уже существует'}), 409
+
+    try:
+        # Создание нового пользователя
+        user = User(**params)
+        session.add(user)
+        session.commit()
+        
+        # Генерация токена
+        token = user.get_token()
+        return jsonify({'token': token}), 201
+
+    except IntegrityError:
+        return jsonify({'error': 'Сервер'}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    params = request.get_json()
-    user = User.authentificate(**params)
-    token = user.get_token()
-    return jsonify({'token': token})
+    try:
+        params = request.get_json()
+        user = User.authentificate(**params)
+        token = user.get_token()
+        return jsonify({'token': token})
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 401
+    except NoResultFound:
+        return jsonify({'error': 'Пользователь не найден'}), 404
+    except Exception as e:
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
 
 @app.route('/api/facultyselection', methods=['POST'])
 def facultyselection():

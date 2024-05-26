@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from passlib.hash import bcrypt
 
+
 class User(Base):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -30,9 +31,13 @@ class User(Base):
 
     @classmethod
     def authentificate(cls, email, password):
-        user = cls.query.filter(cls.email == email).one()
+        user = cls.query.filter_by(email=email).one_or_none()
+        if user is None:
+            raise ValueError("Пользователь не найден")
+
         if not bcrypt.verify(password, user.password):
-            return "Неверный пароль"
+            raise ValueError("Неверный пароль")
+
         return user
     
 class FacultyForm(Base):

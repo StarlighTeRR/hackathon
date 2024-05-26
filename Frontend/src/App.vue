@@ -1,13 +1,13 @@
 <template>
   <div class="header" @click="handleClickOutside">
     <nav class="header__container">
-      <div class="right-link">
+      <div v-if="!isAuthenticated" class="right-link">
         <div class="header__button">
           <RouterLink to="/login">Войти</RouterLink>
         </div>
       </div>
 
-      <div class="right-link" ref="dropdown">
+      <div v-else class="right-link" ref="dropdown">
         <label for="dropdown-checkbox" class="profile__header">
           <span class="dropdown-text">Мой профиль</span>
           <span class="dropdown__arrow" :class="{ rotated: isDropdownOpen }"></span>
@@ -17,7 +17,7 @@
           <ul>
             <li class="dropdown-item dropdown-text" @click="OpenUserProfilePage">Профиль</li>
             <li class="dropdown-item dropdown-text" @click="OpenQuestionnairePage">Моя анкета</li>
-            <li class="dropdown-item dropdown-text">Выйти</li>
+            <li class="dropdown-item dropdown-text" @click="logout">Выйти</li>
           </ul>
         </div>
       </div>
@@ -57,9 +57,15 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import router from './router';
 
 export default {
+  computed: {
+    ...mapGetters({
+      isAuthenticated: 'isAuthenticated', // Получаем isAuthenticated из геттеров Vuex
+    }),
+  },
   data() {
     return {
       login: '',
@@ -76,6 +82,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['removeAuthToken']),
+    logout() {
+      this.removeAuthToken();
+      this.$router.push({ name: 'login' });
+    },
     OpenUserProfilePage() {
     router.push('UserProfile');
     this.currentPage = 'UserProfile';
@@ -161,7 +172,7 @@ nav {
   line-height: 1.5;
   height: 44px;
   overflow-y: hidden;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
 }
 
@@ -186,12 +197,14 @@ nav {
 
 a.right-link {
   margin-left: auto;
-  margin-right: 10px;
+  margin-right: 10px
+  r
 }
 
 .right-link {
   position: relative;
   width: max-content;
+  text-align: right;
   border-radius: 5px;
 }
 
