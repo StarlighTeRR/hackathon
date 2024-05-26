@@ -8,10 +8,10 @@
 
     <div class="form-container">
       <h2>Заполните форму для подбора факультета</h2>
-      <form @submit.prevent="submitForm">
+      <form @submit.prevent="getFaculties">
         <div class="form-group">
           <label>Любимые предметы в школе:</label>
-          <input type="text" v-model="favoriteSubjects" placeholder="Введите предметы через запятую" />
+          <input type="text" v-model="favorite_subjects" placeholder="Введите предметы через запятую" />
         </div>
         <div class="form-group">
           <label>Нелюбимые предметы в школе:</label>
@@ -37,16 +37,35 @@
 <style scoped></style>
 
 <script>
+import axios from 'axios';
 
 export default {
   data() {
     return {
-      favoriteSubjects: '',
+      favorite_subjects: '',
       leastFavoriteSubjects: '',
       exams: '',
       interests: '',
       disinterests: '',
       results: []
+    }
+  },
+    methods: {
+      async getFaculties() {
+        if (this.favorite_subjects.length < 2) {
+          this.errorMessage = 'Любимый предмет не введён';
+          return;
+        }
+
+      try {
+        const response = await axios.post('/api/facultyselection', {
+          favorite_subjects: this.favorite_subjects
+        });
+        this.disinterests = response.data;
+      } 
+      catch (error) {
+        this.errorMessage = error.response ? error.response.data.message : 'An error occurred';
+      }
     }
   }
 };
