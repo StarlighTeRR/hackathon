@@ -11,6 +11,27 @@ from config import Config
 from sqlalchemy.exc import NoResultFound
 import re
 
+
+import joblib 
+direction_names = {
+    2: "Информатика и вычислительная техника",
+    3: "Программная инженерия",
+    4: "Информационная безопасность",
+    5: "Биология",
+    6: "Математика и математическое моделирование"
+}
+def predict_direction(model, label_encoder, subjects, direction_names):
+    text_representation = ' '.join(map(str, subjects))
+    prediction_encoded = model.predict([text_representation])
+    prediction_decoded = label_encoder.inverse_transform(prediction_encoded)
+    predicted_direction = direction_names[prediction_decoded[0]]
+    return predicted_direction
+model = joblib.load('model.joblib')
+label_encoder = joblib.load('label_encoder.joblib')
+
+
+
+
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 client = app.test_client()
@@ -84,16 +105,26 @@ def login():
 def facultyselection():
     data = request.get_json()
 
+    # Получение строки с названиями предметов из данных пользователя
+    subjects_str = data['favorite_subjects']
 
-    # Возьми значение из data и составь результат result
-    # Записб в бд результата и дданных пользователя
+    # Преобразование строки с предметами в список, разделяя по запятой
+    subjects_list = subjects_str.split(',')
 
-    faculty = FacultyForm(**data)
-    session.add(faculty)
-    session.commit()
+    # Сопоставление каждого предмета с вашим словарем направлений
+    favorite_subjects = [1 if subject.strip() in data['favorite_subjects'] else 0 for subject in direction_names.values()]
 
-    result = "Результат"
-    return jsonify({'facultyresult': "Результат"})
+    # Прогнозирование направления с использованием вашей модели
+    predicted_direction = predict_direction(model, label_encoder, favorite_subjects, direction_names)
+
+    # Запись результата и данных пользователя в базу данных 
+    # faculty = FacultyForm(**data)
+    # faculty.result = predicted_direction
+    # session.add(faculty)
+    # session.commit()
+
+    return jsonify({'result': 'predicted_direction'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

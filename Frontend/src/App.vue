@@ -44,7 +44,7 @@
         <div class="col-xs-12">
           <ul class="nav-menu">
             <li class="dropdown dropdown--white" :class="{ active: currentPage === 'home' }" @click="OpenHomePage">Выбор факультета</li>
-            <li class="dropdown dropdown-cabinet" :class="{ active: currentPage === 'UserProfile' }" @click="OpenUserProfilePage">Личный кабинет</li>
+            <li v-if="isAuthenticated" class="dropdown dropdown-cabinet" :class="{ active: currentPage === 'UserProfile' }" @click="OpenUserProfilePage">Личный кабинет</li>
           </ul>
         </div>
       </div>

@@ -40,11 +40,15 @@ router.beforeEach((to, from, next) => {
   if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
     // Если пользователь авторизован и пытается попасть на страницы login или register, перенаправьте его на userprofile
     next({ name: 'userprofile' });
-  } else {
+  } 
+  else if (( to.name === 'userprofile') && !isAuthenticated) {
+    // Если пользователь авторизован и пытается попасть на страницы login или register, перенаправьте его на userprofile
+    next({ name: 'home' });
+  }
+  else {
     next(); // В противном случае разрешите навигацию
   }
 });
-
 
 //  Защита навигации по авторизации
 export default router
