@@ -28,7 +28,6 @@
   </template>
   
   <script>
-  import axios from 'axios';
   export default {
     data() {
       return {
@@ -38,9 +37,10 @@
       };
     },
     methods: {
-      async Authentificate() {
+      Authentificate() {
         if (this.isPasswordValid(this.password)) {
             this.errorMessage = ''
+
             try {
                 const response = await axios.post('api/login', {
                     email: this.email,
