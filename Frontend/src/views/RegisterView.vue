@@ -6,25 +6,25 @@
             <h2 class="form-title">Регистрация</h2>
             <form class="register-form" @submit.prevent="registrate">
               <div class="form-group">
-                <input type="email" v-model="login" placeholder="Логин (e-mail)" required>
+                <input type="email" v-model="email" placeholder="Логин (e-mail)" required>
               </div>
               <div class="form-group">
-                <input type="text" v-model="surname" placeholder="Фамилия" required />
+                <input type="text" v-model="last_name" placeholder="Фамилия" required />
               </div>
               <div class="form-group">
                 <input type="text" v-model="name" placeholder="Имя" required />
               </div>
               <div class="form-group">
-                <input type="text" v-model="patronymic" placeholder="Отчество" required />
+                <input type="text" v-model="middle_name" placeholder="Отчество" required />
               </div>
               <div class="form-group">
-                <input type="date" v-model="birthDate" placeholder="Дата рождения" required />
+                <input type="date" v-model="birth_date" placeholder="Дата рождения" required />
               </div>
               <div class="form-group">
                 <input type="password" v-model="password" placeholder="Пароль" required />
               </div>
               <div class="form-group">
-                <input type="password" v-model="confirmPassword" placeholder="Подтверждение пароля" required />
+                <input type="password" v-model="confirm_password" placeholder="Подтверждение пароля" required />
               </div>
               <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
               <div class="form-group form-button">
@@ -38,16 +38,17 @@
   </template>
   
   <script>
+  import axios from 'axios';
+
   export default {
     data() {
       return {
-        login: '',
-        name: '',
-        surname: '',
-        patronymic: '',
-        birthDate: '',
-        password: '',
-        confirmPassword: '',
+        email: 'test1@example.com',
+        name: 'Name',
+        last_name: 'LastName',
+        middle_name: 'MiddleName',
+        birth_date: '2022-12-12',
+        password: '123456asdf',
         errorMessage: ''
       };
     },
@@ -55,7 +56,7 @@
       async registrate() {
         this.errorMessage = '';
   
-        if (this.password !== this.confirmPassword) {
+        if (this.password !== this.confirm_password) {
           this.errorMessage = 'Пароли не совпадают';
           return;
         }
@@ -64,24 +65,23 @@
           this.errorMessage = 'Пароль должен содержать хотя бы 8 латинских букв или цифр';
           return;
         }
-  
-        try {
-          // Логика регистрации REST API
-          // Пример:
-          // await axios.post('/api/register', {
-          //   login: this.login,
-          //   name: this.name,
-          //   surname: this.surname,
-          //   patronymic: this.patronymic,
-          //   birthDate: this.birthDate,
-          //   password: this.password
-          // });
-  
-          alert('Успешная регистрация');
-        } catch (error) {
-          this.errorMessage = 'Ошибка регистрации';
-        }
-      },
+
+      try {
+        const response = await axios.post('/api/register', {
+          email: this.email,
+          name: this.name,
+          last_name: this.last_name,
+          middle_name: this.middle_name,
+          birth_date: this.birth_date,
+          password: this.password
+        });
+        
+        // ЗАПИСАТЬ В STORE ЛОГИН И ТОКЕН
+      } 
+      catch (error) {
+        this.errorMessage = error.response ? error.response.data.message : 'Ошибка';
+      }
+    },
       isPasswordValid(password) {
         const passwordRegex = /^[A-Za-z0-9]{8,}$/;
         return passwordRegex.test(password);

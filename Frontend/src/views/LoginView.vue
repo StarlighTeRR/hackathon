@@ -6,7 +6,7 @@
             <h2 class="form-title">Вход</h2>
             <form class="register-form" @submit.prevent="Authentificate">
               <div class="form-group">
-                <input type="email" v-model="login" placeholder="Логин (email)" required>
+                <input type="email" v-model="email" placeholder="Логин (email)" required>
               </div>
               <div class="form-group">
                 <input type="password" v-model="password" placeholder="Пароль" required>
@@ -31,7 +31,7 @@
   export default {
     data() {
       return {
-        login: '',
+        email: '',
         password: '',
         errorMessage: ''
       };
@@ -40,11 +40,27 @@
       Authentificate() {
         if (this.isPasswordValid(this.password)) {
             this.errorMessage = ''
-          alert('Вход выполнен');
-        } else {
-          this.errorMessage = 'Пароль может сожержать только латинские буквы и цифры, длина не менее 8 символов';
+
+            try {
+                const response = await axios.post('api/login', {
+                    email: this.email,
+                    password: this.password
+                });
+                this.errorMessage = response.data.message;
+            } 
+            catch (error) {
+                if (error.response) {
+                    alert(error.response.data.message);
+                } else {
+                    alert('Ошибка.');
+                }
+            }
+        } 
+        else {
+          this.errorMessage = 'Пароль латинские буквы и цифры, длина не менее 8 символов';
         }
       },
+
       isPasswordValid(password) {
         const passwordRegex = /^[A-Za-z0-9]{8,}$/;
         return passwordRegex.test(password);
