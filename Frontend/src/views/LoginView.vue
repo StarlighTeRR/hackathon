@@ -28,7 +28,6 @@
   </template>
   
   <script>
-  import axios from 'axios';
   export default {
     data() {
       return {
@@ -38,27 +37,12 @@
       };
     },
     methods: {
-      async Authentificate() {
+      Authentificate() {
         if (this.isPasswordValid(this.password)) {
             this.errorMessage = ''
-          
-            try {
-                const response = await axios.post('/login', {
-                    login: this.login,
-                    password: this.password
-                });
-                alert(response.data.message);
-            } 
-            catch (error) {
-                if (error.response) {
-                  this.errorMessage = error.response.data.message;
-                } else {
-                    alert('Ошибка связи с сервером.');
-                }
-            }
-        } 
-        else {
-          this.errorMessage = 'Пароль латинские буквы и цифры, длина не менее 8 символов';
+          alert('Вход выполнен');
+        } else {
+          this.errorMessage = 'Пароль может сожержать только латинские буквы и цифры, длина не менее 8 символов';
         }
       },
       isPasswordValid(password) {
