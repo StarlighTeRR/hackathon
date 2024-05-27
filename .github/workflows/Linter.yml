@@ -6,12 +6,6 @@ on:
     tag:
      description: 'Linter-Image tag'
      default: 'Linter-latest'
-  push:
-   branches:
-    - "*"
-   paths: 
-    - 'Frontend/**'
-    - 'Backend/**'
   pull_request: 
     branches:
       - main

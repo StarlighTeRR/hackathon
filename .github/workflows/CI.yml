@@ -6,12 +6,6 @@ on:
     tag:
      description: 'CI-Image tag'
      default: 'CI-latest'
-  push:
-   branches:
-    - "*"
-   paths: 
-    - 'Frontend/**'
-    - 'Backend/**'
   pull_request: 
     branches:
       - main
