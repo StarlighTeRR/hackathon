@@ -39,9 +39,12 @@
   
   <script>
   import axios from 'axios';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
   export default {
+    computed: {
+    ...mapGetters(['isAuthenticated'])
+  },
     data() {
       return {
         email: 'test1@example.com',
@@ -78,12 +81,11 @@ import { mapActions } from 'vuex';
           birth_date: this.birth_date,
           password: this.password
         })
-        console.log(response.data)
         if (response.data.error) {
           this.error = response.data.error;
         } 
         else if (response.data.token) {
-          this.saveAuthToken(response.data)
+          this.saveAuthToken(response.data.token)
           this.$router.push({name: 'home'})
         }
       } 

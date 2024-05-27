@@ -21,7 +21,7 @@ export const store = new Vuex.Store({
     }
   },
   getters: {
-    isAuthenticated: (state) => !!state.authToken
+    isAuthenticated: (state) => state.authToken
   }
 })
 
