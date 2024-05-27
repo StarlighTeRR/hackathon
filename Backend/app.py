@@ -49,7 +49,6 @@ Base.query = session.query_property()
 
 jwt = JWTManager(app)
 
-
 Base.metadata.create_all(bind=engine)
 
 
