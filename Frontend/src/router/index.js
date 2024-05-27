@@ -33,22 +33,19 @@ const router = createRouter({
   ]
 })
 
-
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.getters.isAuthenticated;
+  const isAuthenticated = store.getters.isAuthenticated
 
   if ((to.name === 'login' || to.name === 'register') && isAuthenticated) {
     // Если пользователь авторизован и пытается попасть на страницы login или register, перенаправьте его на userprofile
-    next({ name: 'userprofile' });
-  } 
-  else if (( to.name === 'userprofile') && !isAuthenticated) {
+    next({ name: 'userprofile' })
+  } else if ((to.name === 'userprofile') && !isAuthenticated) {
     // Если пользователь авторизован и пытается попасть на страницы login или register, перенаправьте его на userprofile
-    next({ name: 'home' });
+    next({ name: 'home' })
+  } else {
+    next() // В противном случае разрешите навигацию
   }
-  else {
-    next(); // В противном случае разрешите навигацию
-  }
-});
+})
 
 //  Защита навигации по авторизации
 export default router

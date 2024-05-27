@@ -1,28 +1,28 @@
-import Vuex from 'vuex';
+import Vuex from 'vuex'
 
 export const store = new Vuex.Store({
   state: {
-    authToken: null,
+    authToken: null
   },
   mutations: {
-    setAuthToken(state, token) {
-      state.authToken = token;
+    setAuthToken (state, token) {
+      state.authToken = token
     },
-    clearAuthToken(state) {
-      state.authToken = null;
-    },
+    clearAuthToken (state) {
+      state.authToken = null
+    }
   },
   actions: {
-    saveAuthToken({ commit }, token) {
-      commit('setAuthToken', token);
+    saveAuthToken ({ commit }, token) {
+      commit('setAuthToken', token)
     },
-    removeAuthToken({ commit }) {
-      commit('clearAuthToken');
-    },
+    removeAuthToken ({ commit }) {
+      commit('clearAuthToken')
+    }
   },
   getters: {
-    isAuthenticated: (state) => !!state.authToken,
-  },
-});
+    isAuthenticated: (state) => !!state.authToken
+  }
+})
 
-export default store;
+export default store

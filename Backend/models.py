@@ -6,7 +6,7 @@ from passlib.hash import bcrypt
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), nullable=False, unique=True)
@@ -15,7 +15,7 @@ class User(Base):
     middle_name = db.Column(db.String(120), nullable=True)
     birth_date = db.Column(db.String(120), nullable=False)
 
-    def __init__(self, email,name,last_name,middle_name,birth_date,password):
+    def __init__(self, email, name, last_name, middle_name, birth_date, password):
         self.email = email
         self.name = name
         self.password = bcrypt.hash(password)
@@ -39,16 +39,14 @@ class User(Base):
             raise ValueError("Неверный пароль")
 
         return user
-    
+
+
 class FacultyForm(Base):
-    __tablename__ = 'faculty_forms'
+    __tablename__ = "faculty_forms"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     favorite_subjects = db.Column(db.String(100), nullable=False)
     result = db.Column(db.String(120), nullable=False)
 
-    def __init__(self, favorite_subjects,result):
+    def __init__(self, favorite_subjects, result):
         self.favorite_subjects = favorite_subjects
         self.result = result
-
-
-

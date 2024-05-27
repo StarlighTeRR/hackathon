@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  workflow_dispatch:
+   inputs:
+    tag:
+     description: 'CI-Image tag'
+     default: 'CI-latest'
+  push:
+   branches:
+    - "*"
+   paths: 
+    - 'Frontend/**'
+    - 'Backend/**'
+  pull_request: 
+    branches:
+      - main
+      - develop
+      - 'hotfixes/**'
+    paths:
+      - '**'
+jobs:
+   build:
+     runs-on: ubuntu-latest
+     env:
+         TAG: "${{ inputs.tag != '' && inputs.tag || github.ref_name }}"
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v3
+       - name: Build builder image and push
+         uses: docker/build-push-action@v5
+         with:
+           context: ./Frontend
+           file: ./Frontend/Dockerfile
+           push: false                
+       - name: Build release image and push
+         uses: docker/build-push-action@v3
+         with:
+           context: ./Backend
+           file: ./Backend/Dockerfile
+           push: false
