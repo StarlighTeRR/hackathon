@@ -1,6 +1,7 @@
 <template>
   <div class="header" @click="handleClickOutside">
     <nav class="header__container">
+      <div></div>
       <div v-if="!isAuthenticated" class="right-link">
         <div class="header__button">
           <RouterLink to="/login">Войти</RouterLink>
