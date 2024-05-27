@@ -47,12 +47,12 @@ import { mapActions, mapGetters } from 'vuex';
   },
     data() {
       return {
-        email: 'test1@example.com',
-        name: 'Name',
-        last_name: 'LastName',
-        middle_name: 'MiddleName',
-        birth_date: '2022-12-12',
-        password: '15062004ss',
+        email: '',
+        name: '',
+        last_name: '',
+        middle_name: '',
+        birth_date: '',
+        password: '',
         error: ''
       };
     },

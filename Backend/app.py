@@ -1,17 +1,10 @@
-from models import *
 from flask import Flask, jsonify, request
-import sqlalchemy as db
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy import create_engine
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from flask_jwt_extended import JWTManager, jwt_required
 from flask_cors import CORS
 from config import Config
-from sqlalchemy.exc import NoResultFound
+from models import engine, session, User, FacultyForm
 import re
-
-
 import joblib
 
 direction_names = {
@@ -34,23 +27,10 @@ def predict_direction(model, label_encoder, subjects, direction_names):
 model = joblib.load("model.joblib")
 label_encoder = joblib.load("label_encoder.joblib")
 
-
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-client = app.test_client()
 app.config.from_object(Config)
-engine = create_engine("sqlite:///db.sqlite")
-
-session = scoped_session(sessionmaker(
-    autocommit=False, autoflush=False, bind=engine))
-
-Base = declarative_base()
-Base.query = session.query_property()
-
 jwt = JWTManager(app)
-
-Base.metadata.create_all(bind=engine)
-
 
 @app.route("/api/register", methods=["POST"])
 def register():
