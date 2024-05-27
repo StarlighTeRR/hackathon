@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 from sqlalchemy.exc import IntegrityError, NoResultFound
-from flask_jwt_extended import JWTManager, jwt_required
+from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from config import Config
-from models import engine, session, User, FacultyForm
+from models import session, User
 import re
 import joblib
 
@@ -22,7 +22,6 @@ def predict_direction(model, label_encoder, subjects, direction_names):
     prediction_decoded = label_encoder.inverse_transform(prediction_encoded)
     predicted_direction = direction_names[prediction_decoded[0]]
     return predicted_direction
-
 
 model = joblib.load("model.joblib")
 label_encoder = joblib.load("label_encoder.joblib")

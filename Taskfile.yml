@@ -42,6 +42,7 @@ tasks:
 
   compose-up:
     cmds:
+      - docker-compose -p {{ .PROJECT }} build
       - docker-compose -p {{ .PROJECT }} up -d
 
   compose-down:
