@@ -29,6 +29,10 @@
           <label>Мне неинтересно:</label>
           <textarea v-model="disinterests" placeholder="Расскажите, что вам неинтересно"></textarea>
         </div>
+        <div class="form-group">
+          <label>Результат:</label>
+          <textarea v-model="result"></textarea>
+        </div>
         <button type="submit">Подобрать факультет</button>
       </form>
     </div>
@@ -47,24 +51,28 @@ export default {
       exams: '',
       interests: '',
       disinterests: '',
-      results: []
+      result: '',
+      error: ''
     }
   },
     methods: {
       async getFaculties() {
-        if (this.favorite_subjects.length < 2) {
-          this.errorMessage = 'Любимый предмет не введён';
-          return;
-        }
 
-      try {
-        const response = await axios.post('/api/facultyselection', {
-          favorite_subjects: this.favorite_subjects
-        });
-        this.disinterests = response.data;
+        try {
+        const response = await axios.post('/facultyselection', {
+          favorite_subjects : this.favorite_subjects,
+        })
+        console.log(response.data)
+        if (response.data.error) {
+          this.error = response.data.error;
+        } 
+        else if (response.data.result) {
+          this.result = response.data.result
+        }
       } 
+      
       catch (error) {
-        this.errorMessage = error.response ? error.response.data.message : 'An error occurred';
+        this.error = error.response && error.response.data.error ? error.response.data.error : '';
       }
     }
   }

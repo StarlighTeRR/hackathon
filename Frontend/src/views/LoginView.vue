@@ -11,7 +11,7 @@
               <div class="form-group">
                 <input type="password" v-model="password" placeholder="Пароль" required>
               </div>
-              <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+              <div v-if="error" class="error-message">{{ error }}</div>
               <div class="form-container">
                 <div class="form-group form-button">
                   <input type="submit" class="form-submit" value="Войти">
@@ -28,36 +28,43 @@
   </template>
   
   <script>
+import axios from 'axios';
+import { mapActions } from 'vuex';
+
   export default {
     data() {
       return {
         email: '',
         password: '',
-        errorMessage: ''
+        error: ''
       };
     },
     methods: {
-      Authentificate() {
+      ...mapActions(['saveAuthToken']),
+      async Authentificate() {
         if (this.isPasswordValid(this.password)) {
-            this.errorMessage = ''
+            this.error = ''
 
             try {
-                const response = await axios.post('api/login', {
-                    email: this.email,
-                    password: this.password
-                });
-                this.errorMessage = response.data.message;
-            } 
-            catch (error) {
-                if (error.response) {
-                    alert(error.response.data.message);
-                } else {
-                    alert('Ошибка.');
-                }
-            }
+        const response = await axios.post('/login', {
+          email: this.email,
+          password: this.password,
+        })
+        console.log(response.data)
+        if (response.data.error) {
+          this.error = response.data.error;
+        } 
+        else if (response.data.token) {
+          this.saveAuthToken(response.data)
+          this.$router.push({name: 'home'})
+        }
+      } 
+      catch (error) {
+        this.error = error.response && error.response.data.error ? error.response.data.error : '';
+      }
         } 
         else {
-          this.errorMessage = 'Пароль латинские буквы и цифры, длина не менее 8 символов';
+          this.error = 'Пароль латинские буквы и цифры, длина не менее 8 символов';
         }
       },
 

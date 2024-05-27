@@ -26,7 +26,7 @@
               <div class="form-group">
                 <input type="password" v-model="confirm_password" placeholder="Подтверждение пароля" required />
               </div>
-              <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+              <div v-if="error" class="error-message">{{ error }}</div>
               <div class="form-group form-button">
                 <input type="submit" name="sign" id="sign" class="form-submit" value="Зарегистрироваться" />
               </div>
@@ -39,6 +39,7 @@
   
   <script>
   import axios from 'axios';
+import { mapActions } from 'vuex';
 
   export default {
     data() {
@@ -48,38 +49,46 @@
         last_name: 'LastName',
         middle_name: 'MiddleName',
         birth_date: '2022-12-12',
-        password: '123456asdf',
-        errorMessage: ''
+        password: '15062004ss',
+        error: ''
       };
     },
     methods: {
+      ...mapActions(['saveAuthToken']),
+
       async registrate() {
-        this.errorMessage = '';
+        this.error = '';
   
         if (this.password !== this.confirm_password) {
-          this.errorMessage = 'Пароли не совпадают';
+          this.error = 'Пароли не совпадают';
           return;
         }
   
         if (!this.isPasswordValid(this.password)) {
-          this.errorMessage = 'Пароль должен содержать хотя бы 8 латинских букв или цифр';
+          this.error = 'Пароль должен содержать хотя бы 8 латинских букв или цифр';
           return;
         }
 
       try {
-        const response = await axios.post('/api/register', {
+        const response = await axios.post('/register', {
           email: this.email,
           name: this.name,
           last_name: this.last_name,
           middle_name: this.middle_name,
           birth_date: this.birth_date,
           password: this.password
-        });
-        
-        // ЗАПИСАТЬ В STORE ЛОГИН И ТОКЕН
+        })
+        console.log(response.data)
+        if (response.data.error) {
+          this.error = response.data.error;
+        } 
+        else if (response.data.token) {
+          this.saveAuthToken(response.data)
+          this.$router.push({name: 'home'})
+        }
       } 
       catch (error) {
-        this.errorMessage = error.response ? error.response.data.message : 'Ошибка';
+        this.error = error.response && error.response.data.error ? error.response.data.error : '';
       }
     },
       isPasswordValid(password) {
