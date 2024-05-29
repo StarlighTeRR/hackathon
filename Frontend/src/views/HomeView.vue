@@ -31,7 +31,7 @@
         </div>
         <div class="form-group">
           <label>Результат:</label>
-          <textarea v-model="result"></textarea>
+          <input v-model="result" placeholder="Здесь будет отображён результат" disabled />
         </div>
         <button type="submit">Подобрать факультет</button>
       </form>

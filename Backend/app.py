@@ -1,28 +1,11 @@
 from flask import Flask, jsonify, request
 from sqlalchemy.exc import IntegrityError, NoResultFound
-from flask_jwt_extended import JWTManager, jwt_required
+from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from config import Config
-from models import engine, session, User, FacultyForm
+from models import session, User
 import re
 import joblib
-
-direction_names = {
-    2: "Информатика и вычислительная техника",
-    3: "Программная инженерия",
-    4: "Информационная безопасность",
-    5: "Биология",
-    6: "Математика и математическое моделирование",
-}
-
-
-def predict_direction(model, label_encoder, subjects, direction_names):
-    text_representation = " ".join(map(str, subjects))
-    prediction_encoded = model.predict([text_representation])
-    prediction_decoded = label_encoder.inverse_transform(prediction_encoded)
-    predicted_direction = direction_names[prediction_decoded[0]]
-    return predicted_direction
-
 
 model = joblib.load("model.joblib")
 label_encoder = joblib.load("label_encoder.joblib")
@@ -94,6 +77,21 @@ def login():
 
 @app.route("/api/facultyselection", methods=["POST"])
 def facultyselection():
+    direction_names = {
+    2: "Информатика и вычислительная техника",
+    3: "Программная инженерия",
+    4: "Информационная безопасность",
+    5: "Биология",
+    6: "Математика и математическое моделирование",
+    }
+
+    def predict_direction(model, label_encoder, subjects, direction_names):
+        text_representation = " ".join(map(str, subjects))
+        prediction_encoded = model.predict([text_representation])
+        prediction_decoded = label_encoder.inverse_transform(prediction_encoded)
+        predicted_direction = direction_names[prediction_decoded[0]]
+        return predicted_direction
+
     data = request.get_json()
 
     # Получение строки с названиями предметов из данных пользователя
@@ -119,7 +117,7 @@ def facultyselection():
     # session.add(faculty)
     # session.commit()
 
-    return jsonify({"result": "predicted_direction"})
+    return jsonify({"result": predicted_direction})
 
 
 if __name__ == "__main__":
